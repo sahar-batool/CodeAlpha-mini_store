@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Shop{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a href="{% url 'product_list' %}" class="logo">Shop</a>
+      <nav class="nav">
+        <a href="{% url 'cart_detail' %}">Cart (<span id="cart-count">{{ cart|length }}</span>)</a>
+{% if user.is_authenticated %}
+<a href="{% url 'order_list' %}">My orders</a>
+{% if user.is_staff %}
+      <a href="{% url 'admin:store_order_changelist' %}">Manage orders</a>
+    {% endif %}
+  <span class="muted">Hi, {{ user.username }}</span>
+  <form method="post" action="{% url 'logout' %}" class="logout-form">
+    {% csrf_token %}
+    <button type="submit" class="btn-link plain">Log out</button>
+  </form>
+{% else %}
+  <a href="{% url 'login' %}">Log in</a>
+  <a href="{% url 'register' %}">Register</a>
+{% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% if messages %}
+  {% for message in messages %}
+    <div class="message {{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Built with Django</div>
+  </footer>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="{% static 'js/main.js' %}" defer></script>
+</body>
+</body>
+</html>

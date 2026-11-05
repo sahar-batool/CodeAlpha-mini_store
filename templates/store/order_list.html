@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}My orders{% endblock %}
+
+{% block content %}
+<h1>My orders</h1>
+
+{% if orders %}
+<div class="table-wrap">
+<table class="cart-table">
+  <thead><tr><th>Order</th><th>Date</th><th>Status</th><th>Total</th></tr></thead>
+  <tbody>
+  {% for order in orders %}
+    <tr>
+      <td><a href="{% url 'order_detail' order.id %}">#{{ order.id }}</a></td>
+      <td>{{ order.created|date:"j M Y" }}</td>
+      <td>{{ order.get_status_display }}</td>
+      <td>${{ order.total }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+  <p class="muted">You haven't placed any orders yet.</p>
+  <a class="btn" href="{% url 'product_list' %}">Start shopping</a>
+{% endif %}
+{% endblock %}
