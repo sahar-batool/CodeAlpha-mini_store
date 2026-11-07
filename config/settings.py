@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+import os
+from dotenv import load_dotenv
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -120,14 +122,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 
-# Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
 
 
 LOGIN_URL = "login"
@@ -135,3 +130,32 @@ LOGIN_REDIRECT_URL = "product_list"
 LOGOUT_REDIRECT_URL = "product_list"
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+
+
+mail_user = os.environ.get("EMAIL_HOST_USER", "")
+mail_password = os.environ.get("EMAIL_HOST_PASSWORD", "")
+
+if mail_user and mail_password:
+    # Real sending through Gmail
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+            "OPTIONS": {
+                "host": "smtp.gmail.com",
+                "use_tls": True,
+                "username": mail_user,
+                "password": mail_password,
+            },
+        },
+    }
+    DEFAULT_FROM_EMAIL = f"Shop <{mail_user}>"
+else:
+    # No credentials: print emails in the terminal instead
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.console.EmailBackend",
+        },
+    }
+    DEFAULT_FROM_EMAIL = "Shop <noreply@shop.local>"
