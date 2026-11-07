@@ -22,19 +22,7 @@
 {% if page_obj %}
 <div class="grid">
   {% for product in page_obj %}
-  <a class="card" href="{{ product.get_absolute_url }}">
-    {% if product.image_url %}
-      <img src="{{ product.image_url }}" alt="{{ product.name }}">
-
-    {% else %}
-      <div class="no-image">No image</div>
-    {% endif %}
-    <div class="card-body">
-      <h2>{{ product.name }}</h2>
-      <p class="price">${{ product.price }}</p>
-      {% if product.stock == 0 %}<p class="muted">Out of stock</p>{% endif %}
-    </div>
-  </a>
+    {% include "store/_product_card.html" %}
   {% endfor %}
 </div>
 {% if page_obj.has_other_pages %}

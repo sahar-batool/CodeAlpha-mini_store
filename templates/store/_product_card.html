@@ -1,0 +1,19 @@
+{% firstof product.image_src product.image_url as img %}
+<a class="card" href="{{ product.get_absolute_url }}">
+  <div class="card-img">
+    {% if img %}
+      <img src="{{ img }}" alt="{{ product.name }}" loading="lazy">
+    {% else %}
+      <div class="no-image">No image</div>
+    {% endif %}
+    {% if product.stock == 0 %}
+      <span class="badge out">Sold out</span>
+    {% elif product.stock <= 5 %}
+      <span class="badge">Only {{ product.stock }} left</span>
+    {% endif %}
+  </div>
+  <div class="card-body">
+    <h3>{{ product.name }}</h3>
+    <p class="price">${{ product.price }}</p>
+  </div>
+</a>

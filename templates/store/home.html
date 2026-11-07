@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Shop - fresh finds{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <h1 aria-label="Fresh finds in every category">
+      <span class="hero-line"><span style="--d:.05s">Fresh finds in</span></span>
+      <span class="hero-line"><span style="--d:.2s"><span class="rotator" aria-hidden="true" data-words="{% for c in categories %}{{ c.name }}{% if not forloop.last %},{% endif %}{% endfor %}">{{ categories.0.name|default:"Everything" }}</span></span></span>
+    </h1>
+    <p class="hero-sub">Browse the newest arrivals across every category, add what you like, and check out in a minute.</p>
+    <div class="hero-actions">
+      <a class="btn btn-lg" href="{% url 'product_list' %}">Shop all products</a>
+      <a class="btn btn-lg btn-ghost" href="#categories">Browse categories</a>
+    </div>
+  </div>
+
+ {% if hero_slots %}
+<div class="hero-art">
+  {% for slot in hero_slots %}
+    <div class="hero-card hero-card-{{ forloop.counter }}" data-rotate>
+      {% for p in slot %}
+        <a class="hero-slide{% if forloop.first %} is-active{% endif %}" href="{{ p.get_absolute_url }}"{% if not forloop.first %} tabindex="-1" aria-hidden="true"{% endif %}>
+          <img src="{{ p.hero_img }}" alt="{{ p.name }}">
+          <span class="pill">{{ p.name }} <b>${{ p.price }}</b></span>
+        </a>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+</section>
+
+<section class="section" id="categories">
+  <div class="section-head">
+    <h2>Shop by category</h2>
+    <a class="link-more" href="{% url 'product_list' %}">View all products</a>
+  </div>
+  <div class="cat-grid">
+    {% for c in categories %}
+      <a class="cat-tile" href="{% url 'product_list_by_category' c.slug %}">
+        {% if c.cover %}<img src="{{ c.cover }}" alt="" loading="lazy">{% endif %}
+        <h3>{{ c.name }}</h3>
+        <p>{{ c.count }} product{{ c.count|pluralize }}</p>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <h2>New arrivals</h2>
+    <a class="link-more" href="{% url 'product_list' %}">See everything</a>
+  </div>
+  <div class="grid">
+    {% for product in new_arrivals %}
+      {% include "store/_product_card.html" %}
+    {% endfor %}
+  </div>
+</section>
+
+<section class="promo">
+  <div>
+    <h2>Create an account and track every order.</h2>
+    <p>Every order you place is saved to your account, so you can follow it from the moment you check out.</p>
+  </div>
+  {% if user.is_authenticated %}
+    <a class="btn btn-dark btn-lg" href="{% url 'order_list' %}">View my orders</a>
+  {% else %}
+    <a class="btn btn-dark btn-lg" href="{% url 'register' %}">Create an account</a>
+  {% endif %}
+</section>
+
+{% if budget %}
+<section class="section">
+  <div class="section-head">
+    <h2>Under $50</h2>
+    <a class="link-more" href="{% url 'product_list' %}">Browse the shop</a>
+  </div>
+  <div class="rail">
+    {% for product in budget %}
+      {% include "store/_product_card.html" %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="perks">
+  <div class="perk">
+    <span class="perk-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg></span>
+    <div><h3>Live stock</h3><p>What you see is what's in store. Low stock is flagged on the product.</p></div>
+  </div>
+  <div class="perk">
+    <span class="perk-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+    <div><h3>Order tracking</h3><p>Follow the status of every order from your account.</p></div>
+  </div>
+  <div class="perk">
+    <span class="perk-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg></span>
+    <div><h3>Quick checkout</h3><p>One short form, a clear summary, and you're done.</p></div>
+  </div>
+</section>
+{% endblock %}

@@ -3,45 +3,65 @@
 {% block title %}Your cart{% endblock %}
 
 {% block content %}
-<h1>Your cart</h1>
-
 {% if cart|length %}
-<div class="table-wrap">
-<table class="cart-table">
-  <thead>
-    <tr><th>Product</th><th>Price</th><th>Quantity</th><th>Subtotal</th><th></th></tr>
-  </thead>
-  <tbody>
-  {% for item in cart %}
-    <tr>
-      <td><a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a></td>
-      <td>${{ item.product.price }}</td>
-      <td>
-        <form method="post" action="{% url 'cart_add' item.product.id %}" class="inline-form">
+<div class="page-head">
+  <h1>Your cart</h1>
+  <p class="muted">{{ cart|length }} item{{ cart|length|pluralize }}</p>
+</div>
+
+<div class="cart-layout">
+  <ul class="cart-list">
+    {% for item in cart %}
+    {% firstof item.product.image_src item.product.image_url as img %}
+    <li class="cart-item">
+      <a class="cart-thumb" href="{{ item.product.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+        {% if img %}<img src="{{ img }}" alt="">{% else %}<div class="no-image"></div>{% endif %}
+      </a>
+
+      <div class="cart-info">
+        <h2><a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a></h2>
+        <p class="unit">${{ item.product.price }} each</p>
+
+        <form method="post" action="{% url 'cart_add' item.product.id %}" class="cart-qty" data-autosubmit>
           {% csrf_token %}
           <input type="hidden" name="override" value="1">
-          <input type="number" name="quantity" value="{{ item.quantity }}" min="0" max="{{ item.product.stock }}">
-          <button type="submit">Update</button>
+          <div class="qty" data-qty>
+            <button type="button" class="qty-btn" data-step="-1" aria-label="Decrease quantity">&minus;</button>
+            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" inputmode="numeric" aria-label="Quantity for {{ item.product.name }}">
+            <button type="button" class="qty-btn" data-step="1" aria-label="Increase quantity">+</button>
+          </div>
+          <noscript><button type="submit">Update</button></noscript>
         </form>
-      </td>
-      <td>${{ item.subtotal }}</td>
-      <td>
+      </div>
+
+      <div class="cart-line">
+        <span class="line-total">${{ item.subtotal }}</span>
         <form method="post" action="{% url 'cart_remove' item.product.id %}">
           {% csrf_token %}
           <button type="submit" class="btn-link">Remove</button>
         </form>
-      </td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <aside class="cart-summary">
+    <h2>Order summary</h2>
+    <div class="sum-row"><span>Items</span><span>{{ cart|length }}</span></div>
+    <div class="sum-row total"><span>Total</span><span>${{ cart.get_total }}</span></div>
+    <a class="btn btn-lg" href="{% url 'checkout' %}">Go to checkout</a>
+    <a class="summary-link" href="{% url 'product_list' %}">Continue shopping</a>
+  </aside>
 </div>
 
-<p class="cart-total">Total: <strong>${{ cart.get_total }}</strong></p>
-<p class="cart-actions"><a class="btn" href="{% url 'checkout' %}">Proceed to checkout</a></p>
-
 {% else %}
-  <p class="muted">Your cart is empty.</p>
-  <a class="btn" href="{% url 'product_list' %}">Browse products</a>
+<div class="empty">
+  <div class="empty-icon">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+  </div>
+  <h1>Your cart is empty</h1>
+  <p class="muted">Add a product and it will show up here.</p>
+  <a class="btn btn-lg" href="{% url 'product_list' %}">Browse products</a>
+</div>
 {% endif %}
 {% endblock %}

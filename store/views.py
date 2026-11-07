@@ -11,6 +11,8 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 
 
+
+
 def product_list(request, category_slug=None):
     category = None
     categories = Category.objects.all()
@@ -154,3 +156,50 @@ def order_detail(request, order_id):
 def order_list(request):
     orders = Order.objects.filter(user=request.user).prefetch_related("items__product")
     return render(request, "store/order_list.html", {"orders": orders})
+
+
+def _image(product):
+    """Uploaded image if the model has one, otherwise the pasted link."""
+    return getattr(product, "image_src", "") or product.image_url
+
+
+
+def home(request):
+    available = Product.objects.filter(available=True)
+
+    new_arrivals = list(available[:8])
+    budget = list(available.filter(price__lte=50).order_by("price")[:8])
+
+   
+    by_category = {}
+    for p in available[:60]:
+        img = _image(p)
+        if img:
+            p.hero_img = img
+            by_category.setdefault(p.category_id, []).append(p)
+
+    pool = []
+    while len(pool) < 9 and any(by_category.values()):
+        for items in by_category.values():
+            if items and len(pool) < 9:
+                pool.append(items.pop(0))
+
+ 
+    hero_slots = [s for s in (pool[i::3] for i in range(3)) if s]
+
+    categories = []
+    for c in Category.objects.prefetch_related("products"):
+        items = [p for p in c.products.all() if p.available]
+        if not items:
+            continue
+        c.count = len(items)
+        c.cover = next((_image(p) for p in items if _image(p)), "")
+        categories.append(c)
+
+    return render(request, "store/home.html", {
+        "hero_slots": hero_slots,
+        "categories": categories,
+        "new_arrivals": new_arrivals,
+        "budget": budget,
+    })
+

@@ -14,7 +14,7 @@
     <tr>
       <td><a href="{% url 'order_detail' order.id %}">#{{ order.id }}</a></td>
       <td>{{ order.created|date:"j M Y" }}</td>
-      <td>{{ order.get_status_display }}</td>
+      <td><span class="status status-{{ order.status }}">{{ order.get_status_display }}</span></td>
       <td>${{ order.total }}</td>
     </tr>
   {% endfor %}
