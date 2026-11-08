@@ -56,3 +56,6 @@ templates/   HTML templates
 static/      CSS and JavaScript
 ```
 
+## Screenshots
+   ![Home page](screenshots/home.png)
+   ![Product page](screenshots/product.png)
