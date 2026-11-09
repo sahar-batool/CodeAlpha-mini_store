@@ -2,7 +2,7 @@
 
 A full-featured e-commerce website built with **Django**, **HTML**, **CSS** and **JavaScript**, deployed on Vercel.
 
-**Live demo:** https://code-alpha-mini-store-a1dd6ms9k-junior-developer4.vercel.app/
+**Live demo:** https://code-alpha-mini-store.vercel.app/
 
 ## Features
 
