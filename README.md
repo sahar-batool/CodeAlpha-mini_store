@@ -1,4 +1,8 @@
 # Django Mini Store
+**Live demo:** https://code-alpha-mini-store-a1dd6ms9k-junior-developer4.vercel.app/
+## Deployment
+
+Deployed on Vercel with a Neon Postgres database. Secrets (secret key, email credentials, database address) are set as environment variables and are not stored in the repository.
 
 A basic e-commerce website built with **Django**, **HTML**, **CSS** and **JavaScript**.
 
