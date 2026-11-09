@@ -9,6 +9,8 @@ from .forms import RegisterForm, OrderForm
 from .models import Category, Product, Order, OrderItem
 from django.http import JsonResponse
 from django.core.paginator import Paginator
+from django.contrib.auth import views as auth_views
+from .ratelimit import client_ip, is_limited, record_attempt
 
 
 
@@ -202,4 +204,15 @@ def home(request):
         "new_arrivals": new_arrivals,
         "budget": budget,
     })
+
+
+class RateLimitedPasswordResetView(auth_views.PasswordResetView):
+    def form_valid(self, form):
+        email = form.cleaned_data["email"]
+        ip = client_ip(self.request)
+        if is_limited(email, ip):
+            form.add_error("email", "Too many reset requests. Please wait a while and try again.")
+            return self.form_invalid(form)
+        record_attempt(email, ip)
+        return super().form_valid(form)
 

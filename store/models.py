@@ -76,3 +76,9 @@ class OrderItem(models.Model):
     @property
     def subtotal(self):
         return self.price * self.quantity
+
+
+class ResetAttempt(models.Model):
+    email_hash = models.CharField(max_length=64, db_index=True)
+    ip = models.GenericIPAddressField(null=True, blank=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True, db_index=True)

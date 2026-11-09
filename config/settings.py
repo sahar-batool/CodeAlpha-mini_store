@@ -185,3 +185,6 @@ else:
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+
+PASSWORD_RESET_TIMEOUT = 15 * 60  # reset links expire after 15 minutes
