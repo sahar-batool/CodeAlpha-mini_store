@@ -26,7 +26,7 @@ A basic e-commerce website built with **Django**, **HTML**, **CSS** and **JavaSc
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR-USERNAME/django-mini-store.git
+git clone https://github.com/sahar-batool/django-mini-store.git
 cd django-mini-store
 
 # 2. Create and activate a virtual environment
